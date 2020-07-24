@@ -1,0 +1,58 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "",
+  "Metadata": {},
+  "Parameters" : {
+  "DBName" : {
+      "Default"  : "DB",
+      "Description" : "The WordPress database name",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    }
+},
+
+
+"Resources": {
+
+"ec2usingcloudformation" : {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "InstanceType": "t2.micro",  
+    "SecurityGroupIds": [{ "Ref" : "InstanceSecurityGroup1" }],
+    "ImageId" : "ami-02d55cb47e83a99a0",
+    "KeyName" : "nixnama"
+   }
+
+},
+
+"InstanceSecurityGroup1" : {
+   "Type" : "AWS::EC2::SecurityGroup",
+   "Properties" : {
+      "GroupDescription" : "Allow http to client host",
+      "VpcId" : "vpc-00d5ce68",
+      "SecurityGroupIngress" : [{
+         "IpProtocol" : "tcp",
+         "FromPort" : 81,
+         "ToPort" : 81,
+         "CidrIp" : "0.0.0.0/0"
+      }],
+      "SecurityGroupEgress" : [{
+         "IpProtocol" : "tcp",
+         "FromPort" : 80,
+         "ToPort" : 80,
+         "CidrIp" : "0.0.0.0/0"
+      }]
+   }
+}
+},
+"Outputs" : {
+    "WebsiteURL" : {
+      "Value" : { "Fn::GetAtt" : [ "InstanceSecurityGroup1", "VpcId" ]},
+      "Description" : "WordPress Website"
+    }
+  }
+}
+
